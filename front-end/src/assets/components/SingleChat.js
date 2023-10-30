@@ -140,6 +140,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 
     useEffect(() => {
         const handleMessageReceived = (newMessageRecieved) => {
+            console.log(newMessageRecieved)
             if (
                 !selectedChatCompare ||
                 selectedChatCompare._id !== newMessageRecieved.chat._id
@@ -154,6 +155,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         };
 
         socket.on("message received", handleMessageReceived);
+
 
         return () => {
             socket.off("message received", handleMessageReceived);
