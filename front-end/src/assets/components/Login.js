@@ -25,49 +25,57 @@ function Login() {
     const submitHandler = async () => {
         if (!formData.password || !formData.email) {
             toast({
-                title: 'Fill all Field',
-                description: "Data of some flied is missing",
+                title: 'Fill all Fields',
+                description: "Some data is missing",
                 status: 'warning',
                 duration: 5000,
                 isClosable: true,
             });
-            setLoading(false)
-
             return;
         }
+    
         try {
             const config = {
                 headers: {
                     "Content-Type": "application/json"
                 }
-            }
-            const {data} = await axios.post('/api/user/login', formData, config)
-            if (data.success){
+            };
+            const { data } = await axios.post('/api/user/login', formData, config);
+    
+            if (data.success) {
                 toast({
-                    title: 'Login Successfull',
-                    description: "Your successfully loged in your account",
+                    title: 'Login Successful',
+                    description: "You have successfully logged in.",
                     status: 'success',
                     duration: 5000,
                     isClosable: true,
                 });
-                localStorage.setItem("userInfo", JSON.stringify(data))
-                navigate('/chat')
-                setChats("")
-                window.location.reload()
-            }
-            else{
+    
+                localStorage.setItem("userInfo", JSON.stringify(data));
+                navigate('/chat');
+                setChats("");
+                window.location.reload();
+            } else {
                 toast({
-                    title: 'Error To login Account',
-                    description:  data.error,
+                    title: 'Error Logging In',
+                    description: data.error,
                     status: 'warning',
                     duration: 5000,
                     isClosable: true,
                 });
             }
         } catch (error) {
-            console.log(error)
+            console.error("Error during login:", error);
+    
+            toast({
+                title: 'Error',
+                description: 'There was an issue with the login. Please try again.',
+                status: 'error',
+                duration: 5000,
+                isClosable: true,
+            });
         }
-    }
+    };
     return (
         <VStack>
             <FormControl id='email' isRequired fontWeight={900}
