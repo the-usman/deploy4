@@ -13,7 +13,6 @@ const port = 5000;
 app.use(cors());
 
 app.use('/api/user/', userRoutes);
-
 app.use('/api/chat/', chatRouter);
 app.use('/api/message/', message);
 
@@ -38,45 +37,33 @@ const server = app.listen(port, () => {
 
 const io = require('socket.io')(server, {
     cors: {
-        origin: 'https://chatwav.vercel.app', 
+        origin: 'https://chatwav.vercel.app',
         methods: ['GET', 'POST']
     }
 });
 
 io.on('connection', (socket) => {
-    console.log('Connected to socket.io');
+    console.log('A user connected');
 
-    socket.on('setup', (userData) => {
-        console.log(userData._id);
-        socket.join(userData._id);
+    socket.on('join', (userData) => {
+        socket.join(userData.id);
         socket.emit('connected');
     });
 
-    socket.on('join chat', (room) => {
-        socket.join(room);
-        console.log('User Joined Room: ' + room);
+    socket.on('typing', (room) => {
+        socket.to(room).emit('isTyping', true);
     });
 
-    socket.on('typing', (room) => io.in(room).emit('typing'));
-    socket.on('stop typing', (room) => io.in(room).emit('stop typing'));
-
-    socket.on('new message', (newMessageReceived) => {
-        const chat = newMessageReceived.chat;
-
-        if (!chat.user) return console.log('chat.users not defined');
-
-        chat.user.forEach((user) => {
-            if (user._id === newMessageReceived.sender._id) return;
-
-            io.to(user._id).emit('message received', newMessageReceived);
-        });
+    socket.on('stop typing', (room) => {
+        socket.to(room).emit('isTyping', false);
     });
 
-    socket.on('typing', (room) => io.in(room).emit('typing'));
-    socket.on('stop typing', (room) => io.in(room).emit('stop typing'));
-    socket.off('setup', () => {
-        console.log('USER DISCONNECTED');
-        socket.leave(userData._id);
+    socket.on('new message', (newMessageRecieved) => {
+        io.to(newMessageRecieved.room).emit('message received', newMessageRecieved);
+    });
+
+    socket.on('disconnect', () => {
+        console.log('A user disconnected');
     });
 });
 

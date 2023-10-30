@@ -10,7 +10,7 @@ import io from 'socket.io-client'
 import Lottie from 'react-lottie'
 import animationData from '../assests/images/typing.json'
 
-const ENDPOINT = "https://chatwav.vercel.app/";
+const ENDPOINT = "https://chatwav.vercel.app";
 var socket, selectedChatCompare;
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     const [messages, setMessages] = useState([]);
