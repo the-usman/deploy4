@@ -27,7 +27,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             preserveAspectRatio: "xMidYMid slice",
         },
     };
-    const { user, setSelectedChats, selectedChat, getSender, getSenderFull,notification, setNotification } = useContext(Context)
+    const { user, setSelectedChats, selectedChat, getSender, getSenderFull, notification, setNotification } = useContext(Context)
     const [socketConnected, setSocketConnected] = useState("");
     const fetchMessages = async () => {
         if (!selectedChat)
@@ -93,14 +93,20 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         }
     };
     useEffect(() => {
-        socket = io(ENDPOINT);
-        user._id = user.id
+        let socket = io(ENDPOINT);
+        user._id = user.id;
+
         socket.emit("setup", user);
+
         socket.on("connected", () => setSocketConnected(true));
-        socket.on('typing', () => setIsTyping(true))
-        socket.on('stop typing', () => setIsTyping(false))
-        // eslint-disable-next-line
-    }, []);
+        socket.on('typing', () => setIsTyping(true));
+        socket.on('stop typing', () => setIsTyping(false));
+
+        return () => {
+            // Clean up socket connections when unmounting
+            socket.disconnect();
+        };
+    }, [user]);
 
     const typingHandler = (e) => {
         setNewMessage(e.target.value);
@@ -133,9 +139,9 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 
 
     useEffect(() => {
-        socket.on("message recieved", (newMessageRecieved) => {
+        const handleMessageReceived = (newMessageRecieved) => {
             if (
-                !selectedChatCompare || 
+                !selectedChatCompare ||
                 selectedChatCompare._id !== newMessageRecieved.chat._id
             ) {
                 if (!notification.includes(newMessageRecieved)) {
@@ -143,10 +149,16 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                     setFetchAgain(!fetchAgain);
                 }
             } else {
-                setMessages([...messages, newMessageRecieved]);
+                setMessages(prevMessages => [...prevMessages, newMessageRecieved]);
             }
-        });
-    });
+        };
+
+        socket.on("message received", handleMessageReceived);
+
+        return () => {
+            socket.off("message received", handleMessageReceived);
+        };
+    }, [fetchAgain, notification, selectedChatCompare]);
 
     return (
         <>
@@ -217,7 +229,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                             {isTyping ? <div><Lottie
                                 options={defaultOptions}
                                 width={70}
-                                style={{ marginBottom: 15, marginLeft: 0,  position:'relative', marginTop:'30px' }}
+                                style={{ marginBottom: 15, marginLeft: 0, position: 'relative', marginTop: '30px' }}
                             /></div> : (<></>)}
                             <Input
                                 variant="filled"

@@ -9,9 +9,9 @@ require('dotenv').config();
 
 const app = express();
 app.use(express.json());
-const port = 5000;
-app.use(cors());
+const port = process.env.PORT || 5000; // Get port from environment variable
 
+app.use(cors());
 app.use('/api/user/', userRoutes);
 app.use('/api/chat/', chatRouter);
 app.use('/api/message/', message);
@@ -21,7 +21,6 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 if (isProduction) {
     app.use(express.static(path.resolve(__dirname1, 'front-end', 'build')));
-
     app.get('*', (req, res) => {
         res.sendFile(path.resolve(__dirname1, 'front-end', 'build', 'index.html'));
     });
@@ -32,7 +31,7 @@ if (isProduction) {
 }
 
 const server = app.listen(port, () => {
-    console.log('Your app is listening at http://localhost:5000');
+    console.log(`Your app is listening at http://localhost:${port}`);
 });
 
 const io = require('socket.io')(server, {
@@ -58,8 +57,8 @@ io.on('connection', (socket) => {
         socket.to(room).emit('isTyping', false);
     });
 
-    socket.on('new message', (newMessageRecieved) => {
-        io.to(newMessageRecieved.room).emit('message received', newMessageRecieved);
+    socket.on('new message', (newMessageReceived) => {
+        io.to(newMessageReceived.room).emit('message received', newMessageReceived);
     });
 
     socket.on('disconnect', () => {
