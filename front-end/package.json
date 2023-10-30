@@ -24,7 +24,7 @@
   },
   "scripts": {
     "start": "react-scripts --openssl-lagacy-provider start",
-    "build": "react-scripts --openssl-lagacy-provider build",
+    "build": "react-scripts  build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
