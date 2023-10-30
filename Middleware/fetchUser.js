@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken')
-const SecretKey = process.env.SECRECT_key
+const SecretKey = "chatwave001";
 
 const fetchUser = async (req, res, next) => {
     let success = false
