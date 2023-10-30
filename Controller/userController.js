@@ -15,7 +15,7 @@ const SignUpUser = asyncHandler(async (req, res) => {
     }
 
 
-    // Use await when generating the salt and hashing the password
+   
     const salt = await bcrypt.genSalt(10);
     const secPass = await bcrypt.hash(password.toString(), salt);
 
@@ -131,5 +131,6 @@ const allUser = asyncHandler(async (req, res) => {
 module.exports = {
     SignUpUser,
     LoginUser,
-    allUser
+    allUser,
+    UpdatedUser
 };

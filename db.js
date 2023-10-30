@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const ConnectToDataBase = async () => {
     try {
-        const db = process.env.DB; // Ensure the correct variable name from your environment
+        const db = process.env.DB; 
         let retryCount = 0;
         const maxRetries = 5;
         
