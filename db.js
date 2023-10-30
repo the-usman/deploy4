@@ -10,7 +10,6 @@ const ConnectToDataBase = async () => {
             await mongoose.connect(db, {
                 useNewUrlParser: true,
                 useUnifiedTopology: true,
-                useCreateIndex: true,
             });
         };
 
@@ -21,7 +20,7 @@ const ConnectToDataBase = async () => {
                 setTimeout(async () => {
                     console.log(`Retrying connection... Attempt ${retryCount}`);
                     await connectWithRetry();
-                }, 16000); // 5 seconds delay before retrying
+                }, 10000); 
             } else {
                 console.error('Failed to connect to MongoDB after several attempts.');
             }
