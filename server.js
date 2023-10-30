@@ -58,6 +58,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('new message', (newMessageReceived) => {
+        console.log(newMessageReceived)
         io.to(newMessageReceived.room).emit('message received', newMessageReceived);
     });
 
